@@ -1,0 +1,30 @@
+{
+  "name": "contract",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/jest": "^29.2.5",
+    "@types/node": "^18.11.18",
+    "arlocal": "1.1.42",
+    "arweave": "1.11.6",
+    "copyfiles": "^2.4.1",
+    "esbuild": "^0.16.17",
+    "jest": "^29.3.1",
+    "replace-in-file": "^6.3.5",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^29.0.4",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.4",
+    "warp-contracts": "1.2.2"
+  },
+  "scripts": {
+    "build:contracts": "yarn run clean && yarn run build-ts && npm run cp",
+    "build-ts": "npx ts-node build.ts",
+    "clean": "npx rimraf ./dist",
+    "cp": "npx copyfiles -u 1 ./contract/**/*.json dist",
+    "build": "yarn run build:contracts",
+    "deploy": "npx ts-node deploy.ts",
+    "test": "npx jest __test__/contract.test.ts"
+  }
+}
