@@ -140,4 +140,12 @@ describe("testing the contract", () => {
     //@ts-ignore
     expect(data.result.db[0]).toEqual(db[0]);
   });
+  it("testing the delete method", async () => {
+    const contract = warp.contract(contractTxId).connect(m_wallet.jwk);
+    await contract.writeInteraction({ function: "delete", id: db[1].id });
+    db.pop();
+    const data = await contract.readState();
+    //@ts-ignore
+    expect(db).toEqual(data.cachedValue.state.db);
+  });
 });
