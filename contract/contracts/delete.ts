@@ -7,8 +7,8 @@ export async function delete_(state: State, action: Action): Promise<Return> {
     //@ts-ignore
     const target = SmartWeave.transaction.owner;
     if (String(target) === String(data[0].uploader)) {
-      const s_data = state.db.filter((e) => e.id !== action.input.id);
-      return { state: s_data };
+      state.db = state.db.filter((e) => e.id !== action.input.id);
+      return { state: state };
     }
   }
   return { state: state };
