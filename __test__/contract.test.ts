@@ -4,6 +4,7 @@ import fs from "fs";
 import path from "path";
 import { Wallet } from "warp-contracts/lib/types/contract/testing/Testing";
 import { execSync } from "child_process";
+import { Console } from "console";
 jest.setTimeout(1200000);
 describe("testing the contract", () => {
   let warp: Warp;
@@ -49,22 +50,24 @@ describe("testing the contract", () => {
     await warp.arweave.transactions.sign(transcation, wallet.jwk);
     await warp.testing.mineBlock();
     if (transcation.id) {
-      let data = {
+      const data: Record<string, any> = {
         id: transcation.id,
         header: "The Quantum Theory of Radiation",
         uploader: wallet.address,
-        time: Number(Date.now().toString().substring(0, 10)).toString(),
         subject: "Physics",
+        time: Number(Date.now().toString().substring(0, 10)).toString(),
         author: "Albert Einstein",
+        version: 1,
       };
-      await contract.writeInteraction({
+      const res = await contract.writeInteraction({
         function: "register",
         id: data.id,
         header: data.header,
         subject: data.subject,
         author: data.author,
       });
-      db.push(data);
+      data.version_txn_history = [res?.originalTxId];
+      db.push(data as State["db"][0]);
       await warp.testing.mineBlock();
     } else {
       fail("Transcation first is not uploaded to the Permaweb");
@@ -82,22 +85,24 @@ describe("testing the contract", () => {
     transcation.addTag("author", "Charles Darwins");
     await warp.arweave.transactions.sign(transcation, m_wallet.jwk);
     if (transcation.id) {
-      let data = {
+      const data: Record<string, any> = {
         id: transcation.id,
         header: "Darwins Theory of Evolution",
         uploader: m_wallet.address,
-        time: Number(Date.now().toString().substring(0, 10)).toString(),
         subject: "Biology",
+        time: Number(Date.now().toString().substring(0, 10)).toString(),
         author: "Charles Darwins",
+        version: 1,
       };
-      await contract.writeInteraction({
+      const res = await contract.writeInteraction({
         function: "register",
         id: transcation.id,
         header: data.header,
         subject: data.subject,
         author: data.author,
       });
-      db.push(data);
+      data.version_txn_history = [res?.originalTxId];
+      db.push(data as State["db"][0]);
       await warp.testing.mineBlock();
     } else {
       fail("Transcation second is not uploaded to the permaweb");
@@ -139,6 +144,30 @@ describe("testing the contract", () => {
     });
     //@ts-ignore
     expect(data.result.db[0]).toEqual(db[0]);
+  });
+  it("testing the update method", async () => {
+    const contract = warp.contract(contractTxId).connect(m_wallet.jwk);
+    const n_data = {
+      header: "Darwins Marc",
+      subject: "Computer Science",
+      author: "Marc Andressen",
+    };
+    const res = await contract.writeInteraction({
+      function: "update",
+      id: db[1].id,
+      header: n_data.header,
+      subject: n_data.subject,
+      author: n_data.author,
+    });
+    await warp.testing.mineBlock();
+    db[1].header = n_data.header;
+    db[1].subject = n_data.subject;
+    db[1].author = n_data.author;
+    db[1].version = db[1].version + 1;
+    db[1].version_txn_history.push(res?.originalTxId as string);
+    const data = await contract.readState();
+    //@ts-ignore
+    expect(db).toEqual(data.cachedValue.state["db"]);
   });
   it("testing the delete method", async () => {
     const contract = warp.contract(contractTxId).connect(m_wallet.jwk);

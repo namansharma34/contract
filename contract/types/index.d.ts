@@ -4,7 +4,7 @@ declare global {
   type Subject =
     | "Physics"
     | "Mathematics"
-    | "Computr Science"
+    | "Computer Science"
     | "Quantitative Biology"
     | "Quantitative Finance"
     | "Statistics"
@@ -22,7 +22,10 @@ declare global {
       subject: string;
       time: string;
       author: string;
+      version: number;
+      version_txn_history: Array<string>;
     }>;
+    maintainer: string;
   }
   interface Action {
     input: {
@@ -32,6 +35,7 @@ declare global {
         | "getByHeader"
         | "getByWallet"
         | "getByAuthor"
+        | "update"
         | "delete";
       id: string;
       header: string;

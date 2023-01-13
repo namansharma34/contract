@@ -14,13 +14,17 @@ export default async function register(
   const uploader = SmartWeave.transaction.owner;
   //@ts-ignore
   const time = SmartWeave.block.timestamp;
+  //@ts-ignore
+  const txn_id = SmartWeave.transaction.id;
   state.db.push({
     id: action.input.id,
     header: action.input.header,
     uploader: String(uploader),
-    time: String(time),
     subject: action.input.subject,
+    time: String(time),
     author: action.input.author,
+    version: 1,
+    version_txn_history: [String(txn_id)],
   });
 
   return { state: state };
