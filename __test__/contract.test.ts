@@ -4,7 +4,6 @@ import fs from "fs";
 import path from "path";
 import { Wallet } from "warp-contracts/lib/types/contract/testing/Testing";
 import { execSync } from "child_process";
-import { Console } from "console";
 jest.setTimeout(1200000);
 describe("testing the contract", () => {
   let warp: Warp;
@@ -114,7 +113,8 @@ describe("testing the contract", () => {
     const data = await contract.viewState<{ function: "get" } | Return>({
       function: "get",
     });
-    console.log(JSON.stringify(data.result));
+    //@ts-ignore
+    expect(db[1]).toEqual(data.result.db[0]);
   });
   it("testing the getByHeader method", async () => {
     const contract = warp.contract(contractTxId);
