@@ -1,19 +1,6 @@
 /* eslint-disable no-var */
 
 declare global {
-  type Subject =
-    | "Physics"
-    | "Mathematics"
-    | "Computer Science"
-    | "Quantitative Biology"
-    | "Quantitative Finance"
-    | "Statistics"
-    | "Electrical Engineering and Systems Science"
-    | "Economics"
-    | "Medicine"
-    | "Biology"
-    | "Journalism";
-
   interface State {
     db: Array<{
       id: string;
